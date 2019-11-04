@@ -8,7 +8,6 @@ En este repositorio se estará desarrollando el proyecto de física, que consist
 * Informe del proyecto. Míralo [aquí](https://github.com/Proyectos-Fisica-20192/Circuitos-RLC/tree/master/informe)
 
 ### Integrantes
-* Romina Cárdenas
 * Micael
 * Gustavo Lozano
 
