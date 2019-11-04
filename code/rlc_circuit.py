@@ -3,6 +3,8 @@ Solucion de un sistema de odes(generado por un circuito rlc)
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 
 def runge_kutta_sist(x0, f, h, a, b):
@@ -19,17 +21,51 @@ def runge_kutta_sist(x0, f, h, a, b):
     """
 
     t = np.arange(a, b, h)
-    x = np.array([x0])  # Solucion del sistema de odes
+    #x = np.array([x0])  # Solucion del sistema de odes
+    x = np.ndarray((len(t), 2, 3))
+    x[0] = x0
 
-    for k, tk in enumerate(t):
+    for k, tk in enumerate(t[:len(t)-1]):
         k1 = f(tk , x[k])
+        #aux2 = x[k]+h*k1/2
         k2 = f(tk + h/2, x[k]+h*k1/2)
+        #aux3 = x[k]+h*k2/2
         k3 = f(tk + h/2, x[k]+h*k2/2)
+        #aux4 = x[k]+h*k3
         k4 = f(tk + h, x[k]+h*k3)
         xx = x[k] + h*(k1+2*k2+2*k3+k4)/6 # xx = x_{k+1}
-        x = np.append(x, xx) 
-        
+        x[k+1] = xx
+
     return t, x
+
+def plot_current(t, i):
+    
+    i0 = np.array([ik[0] for ik in i])
+    i1 = np.array([ik[1] for ik in i])
+    i2 = np.array([ik[2] for ik in i])
+    
+    plt.plot(t, i0, label="i0(t)")
+    plt.plot(t, i1, label="i1(t)")
+    plt.plot(t, i2, label="i2(t)")
+    plt.title("RLC current")
+    plt.legend()
+    plt.grid()
+    #plt.show()
+    
+    
+def plot_capacitor_charge(t, q):
+    
+    q0 = np.array([qk[0] for qk in q])
+    q1 = np.array([qk[1] for qk in q])
+    q2 = np.array([qk[2] for qk in q])
+    
+    plt.plot(t, q0, label="q0(t)")
+    plt.plot(t, q1, label="q1(t)")
+    plt.plot(t, q2, label="q2(t)")
+    plt.title("RLC charge")
+    plt.legend()
+    plt.grid()
+    #plt.show()
 
 
 def f(t, x):
@@ -72,11 +108,17 @@ def f(t, x):
 
 
 #NOTA: x0 = [z0, q0] = [q'(0), q(0)] = [i(0), q(0)], donde i = (i1, i2, i3) y q = (q1, q2, q3)
-x0 = np.array([[0, 0, 0], [0, 0, 0]])
+x0 = np.array([[0, 0, 0], [0, 0, 0]], dtype=np.double)
 
 # [a, b] es el intervalo de tiempo en el cual se estara analizando el circuito
 a = 0   # Inicializar valor real
 b = 1   # Inicializar valor real
 h = 0.01    # tamaño de paso en el metodo de runge-kutta
 
-x = runge_kutta_sist(x0, f, h, a, b)
+# resolviendo el sistema de odes mediante rk4, x = [i, q]
+t, x = runge_kutta_sist(x0, f, h, a, b)
+
+i = np.array([xk[0] for xk in x])   # i = (i0, i1, i2)
+q = np.array([xk[1] for xk in x])   # q = (q0, q1, q2)
+
+
