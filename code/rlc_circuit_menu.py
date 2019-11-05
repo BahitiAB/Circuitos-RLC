@@ -1,7 +1,7 @@
 """
 Solucion de un sistema de odes(generado por un circuito rlc)
 """
-import struct
+#import struct
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
