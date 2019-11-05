@@ -1,10 +1,12 @@
 """
 Solucion de un sistema de odes(generado por un circuito rlc)
 """
+import struct
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi
+from scipy import signal as sg
 
 ############################################################
 ############    metodo numerico         ####################
@@ -52,9 +54,11 @@ def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
         pulso_volt = lambda t: amp*np.sin(2*pi*frec*t)
     elif pulso == "cuadrada":
         def pulso_volt(t): # definir el puso en forma de cuadrada
+            pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
             return 1.0
     elif pulso == "cierra":
         def pulso_volt(t): # definir el puso en forma de cierra
+            pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
             return 1.0
     
     def f(t, x, L = induc, C = capacit, R = resist, volt = pulso_volt):
