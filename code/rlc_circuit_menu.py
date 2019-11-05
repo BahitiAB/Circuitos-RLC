@@ -52,14 +52,12 @@ def runge_kutta_sist(x0, f, h, a, b):
 def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
     if pulso == "sinusoidal":
         pulso_volt = lambda t: amp*np.sin(2*pi*frec*t)
+
     elif pulso == "cuadrada":
-        def pulso_volt(t): # definir el puso en forma de cuadrada
-            pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
-            return 1.0
+        pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
+
     elif pulso == "cierra":
-        def pulso_volt(t): # definir el puso en forma de cierra
-            pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
-            return 1.0
+        pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
     
     def f(t, x, L = induc, C = capacit, R = resist, volt = pulso_volt):
         z = x[0, :]
