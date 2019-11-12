@@ -9,6 +9,7 @@ En este repositorio se estará desarrollando el proyecto de física, que consist
 
 ### Integrantes
 * Micael
+* Alejandra Hinostroza
 * Gustavo Lozano
 
 ### Asesora
