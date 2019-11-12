@@ -1,0 +1,10 @@
+$i_k = \displaystyle{\frac{dq_k}{dt} }
+\begin{equation*}
+	\frac{q_1}{C_1}-L_2 \frac{d}{dt}(i_2+i_3)-\frac{q_2}{C_2}-(i_2+i_3)R_2=0
+	\end{equation*}
+usa
+\begin{eqnarray}
+% \nonumber to remove numbering (before each equation)
+   &=&  \\
+   &=& 
+\end{eqnarray}
