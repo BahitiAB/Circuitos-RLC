@@ -11,5 +11,5 @@ En este repositorio se estará desarrollando el proyecto de física, que consist
 * Micael
 * Gustavo Lozano
 
-### Acesora
+### Asesora
 * Alejandra Altamirano Macetas
