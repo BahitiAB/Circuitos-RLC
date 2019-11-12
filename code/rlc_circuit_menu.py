@@ -103,13 +103,13 @@ def runge_kutta_sist(x0, f, h, a, b):
     return t, x
 """
 def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
-    if pulso == "sinusoidal":
+    if pulso == "sine":
         pulso_volt = lambda t: amp*np.sin(2*pi*frec*t)
 
-    elif pulso == "cuadrada":
+    elif pulso == "square":
         pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
 
-    elif pulso == "cierra":
+    elif pulso == "sawtooth":
         pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
     
     def f(t, x, L = induc, C = capacit, R = resist, volt = pulso_volt):
@@ -170,7 +170,7 @@ def plot_current_inductor(t, i):
     plt.plot(t, i_l2, label = "i_l2(t)")
     plt.plot(t, i_l3, label = "i_l3(t)")
 
-    plt.title("Corriente en inductores (L1, L2, L3)")
+    plt.title("Electric current through inductors (L1, L2, L3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -184,7 +184,7 @@ def plot_current_condesador(t, i):
     plt.plot(t, i1, label = "i_C2(t)")
     plt.plot(t, i2, label = "i_C3(t)")
 
-    plt.title("Corriente en los capacitores (C1, C2, C3)")
+    plt.title("Electric current through capacitors (C1, C2, C3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -203,7 +203,7 @@ def plot_current_resist(t, i):
     plt.plot(t, i_r2, label = "i_r2(t)")
     plt.plot(t, i_r3, label = "i_r3(t)")
 
-    plt.title("Corriente en las resistencias (R1, R2, R3)")
+    plt.title("Electric current through resistors/pots (R1, R2, R3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -225,7 +225,7 @@ def plot_volt_condesador(t, q, C):
     plt.plot(t, v0, label="V0(t) en C0")
     plt.plot(t, v1, label="V1(t) en C1")
     plt.plot(t, v2, label="V2(t) en C2")
-    plt.title("Voltaje capacitores (C0, C1, C2)")
+    plt.title("Voltage on capacitors (C0, C1, C2)")
     plt.legend()
     plt.grid()
     plt.show()
@@ -248,7 +248,7 @@ def plot_volt_resist(t, i, R):
     plt.plot(t, v0, label="V0(t)")
     plt.plot(t, v1, label="V1(t)")
     plt.plot(t, v2, label="V2(t)")
-    plt.title("Voltaje Resistencias (R0, R1, R2)")
+    plt.title("Voltage on resistors (R0, R1, R2)")
     plt.legend()
     plt.grid()
     plt.show()
@@ -283,39 +283,39 @@ def plot_charge_condensador(t, q):
 
 
 def menu_init():
-    print("********** Bienvenido **********")
-    print("Ingresa el intervalo [a, b] a analizar la señal.")
+    print("********** Welcome **********")
+    print("Enter the interval [a, b] where the signal will be tested")
 
     # [a, b] es el intervalo de tiempo en el cual se estara analizando el circuito
-    a = float(input("Ingrese valor de a: "))   # Inicializar valor real
-    b = float(input("Ingrese valor de b: "))   # Inicializar valor real
+    a = float(input("Define the 'a' value: "))   # Inicializar valor real
+    b = float(input("Define the 'b' value: "))   # Inicializar valor real
 
     while b < a:
-        b = float(input("Ingrese valor de b (b > {}): ".format(a)))
+        b = float(input("Define the 'b' value (b > {}): ".format(a)))
         
         
-    h = float(input("Ingrese el tamaño del paso del retodo rk4: "))    # tamaño de paso en el metodo de runge-kutta
+    h = float(input("Pick a step-size for rk4: "))    # tamaño de paso en el metodo de runge-kutta
 
     while h <= 0 or h > abs(b-a):
         if h < 0:
-            h = float(input("Tamaño del paso negativo!.Intente denuevo (paso positivo): "))
+            h = float(input("You picked a negative step-size! Try again (step-size must be positive): "))
         elif np.isclose(h, 0.0):
-            h = float(input("Paso nulo. Ingrese un paso mayor que 0.0: "))
+            h = float(input("Step size equals zero. Pick a step-size greater than 0.0: "))
         else:
-            h = float(input("Tamaño del paso muy grande.Intente denuevo (paso < {}): ".format(abs(b-a))))
+            h = float(input("The step-size you picked is way too large. Try again(paso < {}): ".format(abs(b-a))))
         
     print("Seleccione el pulso del voltaje")
-    options_pulso = ["sinusoidal", "cuadrada", "cierra"]
+    options_pulso = ["sine", "square", "sawtooth"]
     pulso , lether_option_pulso = options_menu(options_pulso)
     
 
     
     if pulso == lether_option_pulso[0]:
-        pulso = "sinusoidal"
+        pulso = "sine"
         amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
         frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[1]:
-        pulso = "cuadrada"
+        pulso = "square"
         amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
         frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[2]:
