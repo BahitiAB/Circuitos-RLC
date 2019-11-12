@@ -109,7 +109,7 @@ def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
     elif pulso == "square":
         pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
 
-    elif pulso == "sawtooth":
+    elif pulso == "triangular":
         pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
     
     def f(t, x, L = induc, C = capacit, R = resist, volt = pulso_volt):
@@ -302,26 +302,26 @@ def menu_init():
         elif np.isclose(h, 0.0):
             h = float(input("Step size equals zero. Pick a step-size greater than 0.0: "))
         else:
-            h = float(input("The step-size you picked is way too large. Try again(paso < {}): ".format(abs(b-a))))
+            h = float(input("The step-size you picked is way too large. Try again(step-size < {}): ".format(abs(b-a))))
         
-    print("Seleccione el pulso del voltaje")
-    options_pulso = ["sine", "square", "sawtooth"]
+    print("Pick a waveform for the signal")
+    options_pulso = ["sine", "square", "triangular"]
     pulso , lether_option_pulso = options_menu(options_pulso)
     
 
     
     if pulso == lether_option_pulso[0]:
         pulso = "sine"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[1]:
         pulso = "square"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[2]:
-        pulso = "cierra"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        pulso = "triangular"
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency{}(hz): ".format(pulso)))
     #elif pulso == lether_option_pulso[-1]:
     #    sys.exit(1)
     """
@@ -342,7 +342,7 @@ def abecedario(n):  # genera las n primero letras del abecedario
 
 
 def options_menu(options):
-    print("Elija una operación: ")
+    print("Pick an operation: ")
     lether_option = abecedario(len(options))
     for lether, opt in zip(lether_option, options):
         print("{}) {}.".format(lether, opt))
@@ -350,20 +350,20 @@ def options_menu(options):
     option.lower()
 
     while option not in lether_option:
-        option = input("Opción invalida. Intenta denuevo(opcion valida = {}).\n>>> ".format(lether_option))
+        option = input("Invalid option. Try again(Invalid option = {}).\n>>> ".format(lether_option))
         option.lower()
 
     return option, lether_option
 
 
 def menu_operation(t, i, q, L , R, C):
-    options_graph = ["Graficar corriente vs tiempo", "Graficar Voltaje vs tiempo", "Graficar carga vs tiempo", "Inicializar denuevo","Exit"]
+    options_graph = ["Graph electric current vs time", "Graph voltage vs time", "Graph charge vs time", "Initialize again","Exit"]
     graph , lether_option_graph = options_menu(options_graph)
 
 
     if graph == lether_option_graph[0]: # Graficas de corriente
-        options_current = ["Corriente en inductores", "Corriente en condensadores" , \
-                        "Corriente en resistencias", "Volver al menú de graficos"] 
+        options_current = ["Electric current through inductors", "Electric current through capacitors" , \
+                        "Electric current through resistors", "Go back to Graph Menu"] 
         current, lether_option_current = options_menu(options_current)
         
         if current == lether_option_current[0]: 
@@ -382,8 +382,8 @@ def menu_operation(t, i, q, L , R, C):
             menu_operation(t, i, q, L , R, C)
 
     elif graph == lether_option_graph[1]: # Graficas de voltaje
-        options_volt = ["Voltaje en inductores(FALTA IMPLEMENTAR)", "Voltaje en condensadores" , \
-                        "Voltaje en resistencias", "Volver al menú de graficos"] 
+        options_volt = ["Voltage on inductors(FALTA IMPLEMENTAR)", "Voltage on capacitors" , \
+                        "Voltage on resistors", "Go Back to Graph Menu"] 
         volt, lether_option_volt = options_menu(options_volt)
         
         if volt == lether_option_volt[0]:
@@ -404,7 +404,7 @@ def menu_operation(t, i, q, L , R, C):
 
 
     elif graph == lether_option_graph[2]:   # Graficas de cargas
-        options_charge = ["Carga en condensadores", "Volver al menú de graficos"] 
+        options_charge = ["Charge on capacitors", "Go back to Graph Menu"] 
         
         charge, lether_option_charge = options_menu(options_charge)
         
