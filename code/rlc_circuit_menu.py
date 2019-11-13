@@ -350,7 +350,7 @@ def options_menu(options):
     option.lower()
 
     while option not in lether_option:
-        option = input("Invalid option. Try again(Invalid option = {}).\n>>> ".format(lether_option))
+        option = input("Invalid option. Try again(Valid options = {}).\n>>> ".format(lether_option))
         option.lower()
 
     return option, lether_option
@@ -470,7 +470,7 @@ def inicializacion():
     f = genera_funcion_sist(pulso, amp, frec, L, R, C)    
         
     # resolviendo el sistema de odes mediante rk4, x = [i, q]
-    print("Procesando Datos ...")
+    print("Processing data...")
     t, x = runge_kutta_sist(x0, f, h, a, b)
 
     i = np.array([xk[0] for xk in x])   # i = (i0, i1, i2)
