@@ -103,13 +103,13 @@ def runge_kutta_sist(x0, f, h, a, b):
     return t, x
 """
 def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
-    if pulso == "sinusoidal":
+    if pulso == "sine":
         pulso_volt = lambda t: amp*np.sin(2*pi*frec*t)
 
-    elif pulso == "cuadrada":
+    elif pulso == "square":
         pulso_volt = lambda t: amp*sg.square(2*np.pi*frec*t)
 
-    elif pulso == "cierra":
+    elif pulso == "triangular":
         pulso_volt = lambda t: amp*sg.sawtooth(2*np.pi*frec*t)
     
     def f(t, x, L = induc, C = capacit, R = resist, volt = pulso_volt):
@@ -170,7 +170,7 @@ def plot_current_inductor(t, i):
     plt.plot(t, i_l2, label = "i_l2(t)")
     plt.plot(t, i_l3, label = "i_l3(t)")
 
-    plt.title("Corriente en inductores (L1, L2, L3)")
+    plt.title("Electric current through inductors (L1, L2, L3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -184,7 +184,7 @@ def plot_current_condesador(t, i):
     plt.plot(t, i1, label = "i_C2(t)")
     plt.plot(t, i2, label = "i_C3(t)")
 
-    plt.title("Corriente en los capacitores (C1, C2, C3)")
+    plt.title("Electric current through capacitors (C1, C2, C3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -203,7 +203,7 @@ def plot_current_resist(t, i):
     plt.plot(t, i_r2, label = "i_r2(t)")
     plt.plot(t, i_r3, label = "i_r3(t)")
 
-    plt.title("Corriente en las resistencias (R1, R2, R3)")
+    plt.title("Electric current through resistors/pots (R1, R2, R3)")
     plt.grid()
     plt.legend()
     plt.show()
@@ -225,7 +225,7 @@ def plot_volt_condesador(t, q, C):
     plt.plot(t, v0, label="V0(t) en C0")
     plt.plot(t, v1, label="V1(t) en C1")
     plt.plot(t, v2, label="V2(t) en C2")
-    plt.title("Voltaje capacitores (C0, C1, C2)")
+    plt.title("Voltage on capacitors (C0, C1, C2)")
     plt.legend()
     plt.grid()
     plt.show()
@@ -248,7 +248,7 @@ def plot_volt_resist(t, i, R):
     plt.plot(t, v0, label="V0(t)")
     plt.plot(t, v1, label="V1(t)")
     plt.plot(t, v2, label="V2(t)")
-    plt.title("Voltaje Resistencias (R0, R1, R2)")
+    plt.title("Voltage on resistors (R0, R1, R2)")
     plt.legend()
     plt.grid()
     plt.show()
@@ -283,45 +283,45 @@ def plot_charge_condensador(t, q):
 
 
 def menu_init():
-    print("********** Bienvenido **********")
-    print("Ingresa el intervalo [a, b] a analizar la señal.")
+    print("********** Welcome **********")
+    print("Enter the interval [a, b] where the signal will be tested")
 
     # [a, b] es el intervalo de tiempo en el cual se estara analizando el circuito
-    a = float(input("Ingrese valor de a: "))   # Inicializar valor real
-    b = float(input("Ingrese valor de b: "))   # Inicializar valor real
+    a = float(input("Define the 'a' value: "))   # Inicializar valor real
+    b = float(input("Define the 'b' value: "))   # Inicializar valor real
 
     while b < a:
-        b = float(input("Ingrese valor de b (b > {}): ".format(a)))
+        b = float(input("Define the 'b' value (b > {}): ".format(a)))
         
         
-    h = float(input("Ingrese el tamaño del paso del retodo rk4: "))    # tamaño de paso en el metodo de runge-kutta
+    h = float(input("Pick a step-size for rk4: "))    # tamaño de paso en el metodo de runge-kutta
 
     while h <= 0 or h > abs(b-a):
         if h < 0:
-            h = float(input("Tamaño del paso negativo!.Intente denuevo (paso positivo): "))
+            h = float(input("You picked a negative step-size! Try again (step-size must be positive): "))
         elif np.isclose(h, 0.0):
-            h = float(input("Paso nulo. Ingrese un paso mayor que 0.0: "))
+            h = float(input("Step size equals zero. Pick a step-size greater than 0.0: "))
         else:
-            h = float(input("Tamaño del paso muy grande.Intente denuevo (paso < {}): ".format(abs(b-a))))
+            h = float(input("The step-size you picked is way too large. Try again(step-size < {}): ".format(abs(b-a))))
         
-    print("Seleccione el pulso del voltaje")
-    options_pulso = ["sinusoidal", "cuadrada", "cierra"]
+    print("Pick a waveform for the signal")
+    options_pulso = ["sine", "square", "triangular"]
     pulso , lether_option_pulso = options_menu(options_pulso)
     
 
     
     if pulso == lether_option_pulso[0]:
-        pulso = "sinusoidal"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        pulso = "sine"
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[1]:
-        pulso = "cuadrada"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        pulso = "square"
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency {}(hz): ".format(pulso)))
     elif pulso == lether_option_pulso[2]:
-        pulso = "cierra"
-        amp = float(input("Amplitud de la onda {}(vpp): ".format(pulso)))
-        frec = float(input("Frecuencia de la onda {}(hz): ".format(pulso)))
+        pulso = "triangular"
+        amp = float(input("Wave amplitude {}(vpp): ".format(pulso)))
+        frec = float(input("Wave frequency{}(hz): ".format(pulso)))
     #elif pulso == lether_option_pulso[-1]:
     #    sys.exit(1)
     """
@@ -342,7 +342,7 @@ def abecedario(n):  # genera las n primero letras del abecedario
 
 
 def options_menu(options):
-    print("Elija una operación: ")
+    print("Pick an operation: ")
     lether_option = abecedario(len(options))
     for lether, opt in zip(lether_option, options):
         print("{}) {}.".format(lether, opt))
@@ -350,20 +350,20 @@ def options_menu(options):
     option.lower()
 
     while option not in lether_option:
-        option = input("Opción invalida. Intenta denuevo(opcion valida = {}).\n>>> ".format(lether_option))
+        option = input("Invalid option. Try again(Valid options = {}).\n>>> ".format(lether_option))
         option.lower()
 
     return option, lether_option
 
 
 def menu_operation(t, i, q, L , R, C):
-    options_graph = ["Graficar corriente vs tiempo", "Graficar Voltaje vs tiempo", "Graficar carga vs tiempo", "Inicializar denuevo","Exit"]
+    options_graph = ["Graph electric current vs time", "Graph voltage vs time", "Graph charge vs time", "Initialize again","Exit"]
     graph , lether_option_graph = options_menu(options_graph)
 
 
     if graph == lether_option_graph[0]: # Graficas de corriente
-        options_current = ["Corriente en inductores", "Corriente en condensadores" , \
-                        "Corriente en resistencias", "Volver al menú de graficos"] 
+        options_current = ["Electric current through inductors", "Electric current through capacitors" , \
+                        "Electric current through resistors", "Go back to Graph Menu"] 
         current, lether_option_current = options_menu(options_current)
         
         if current == lether_option_current[0]: 
@@ -382,8 +382,8 @@ def menu_operation(t, i, q, L , R, C):
             menu_operation(t, i, q, L , R, C)
 
     elif graph == lether_option_graph[1]: # Graficas de voltaje
-        options_volt = ["Voltaje en inductores(FALTA IMPLEMENTAR)", "Voltaje en condensadores" , \
-                        "Voltaje en resistencias", "Volver al menú de graficos"] 
+        options_volt = ["Voltage on inductors(FALTA IMPLEMENTAR)", "Voltage on capacitors" , \
+                        "Voltage on resistors", "Go Back to Graph Menu"] 
         volt, lether_option_volt = options_menu(options_volt)
         
         if volt == lether_option_volt[0]:
@@ -404,7 +404,7 @@ def menu_operation(t, i, q, L , R, C):
 
 
     elif graph == lether_option_graph[2]:   # Graficas de cargas
-        options_charge = ["Carga en condensadores", "Volver al menú de graficos"] 
+        options_charge = ["Charge on capacitors", "Go back to Graph Menu"] 
         
         charge, lether_option_charge = options_menu(options_charge)
         
@@ -470,7 +470,7 @@ def inicializacion():
     f = genera_funcion_sist(pulso, amp, frec, L, R, C)    
         
     # resolviendo el sistema de odes mediante rk4, x = [i, q]
-    print("Procesando Datos ...")
+    print("Processing data...")
     t, x = runge_kutta_sist(x0, f, h, a, b)
 
     i = np.array([xk[0] for xk in x])   # i = (i0, i1, i2)
