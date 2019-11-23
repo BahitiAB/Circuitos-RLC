@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import sys
 
 
 ##################################################
@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np 
 from scipy.misc import derivative
 import matplotlib.pyplot as plt
-
 
 def newton_raphson(f, x0, ERROR, MAX_ITER):
     """
@@ -23,12 +22,18 @@ def newton_raphson(f, x0, ERROR, MAX_ITER):
             x: solucion de la ecuacion no lineal f(x)=0
     """
 #    xk = np.array([x0])
-    for i in range(MAX_ITER):
+    if(abs(f(x0)) < ERROR):
+            return x0
+    
+    #DELTA = 1e-3
+    for i in range(MAX_ITER):   
         x = x0 - f(x0)/derivative(f, x0)
         #xk = np.append(xk, x)
-        e = np.abs(x-x0)
+        e = abs(f(x))
+        #step = abs(x-x0)
         print("Iter{}: x = {}\tERROR = {}".format(i, x, e))
-        if e < ERROR:
+        #if step < DELTA or e < ERROR:
+        if e <ERROR:
             return x
         x0 = x
     return x
@@ -36,12 +41,11 @@ def newton_raphson(f, x0, ERROR, MAX_ITER):
 
 
 
-
 ## resonancias
 
-def resonancias(a, b, f, ERROR=1e-5):
-    x0 = (a+b)/2
-    sol = newton_raphson(f, x0, ERROR, MAX_ITER=100)
+def resonancias(a, b, f, x0, ERROR):
+    MAX_ITER = 1000
+    sol = newton_raphson(f, x0, ERROR, MAX_ITER)
     print("Solucion de la ecuacion f(x)=0\nx = {}\tf({}) = {}".format(sol, sol, f(sol)))
     # Grafica de la funcion x0
     DISC = 1000
@@ -52,14 +56,27 @@ def resonancias(a, b, f, ERROR=1e-5):
     plt.legend()
     plt.show()
 
+    opt = input("Hallar otra raiz(yes/no): ")
+    options = ["yes", "no"]
+    opt.lower()
+    while opt not in options:
+        opt = input("(Opcion invalida) Hallar otra raiz(yes/no): ")
+        opt.lower()
+    
+    if opt == "yes":
+        frec_resonancias()
+    else:
+        sys.exit(1)
 
     
 
 def inicializacion():
 
     print("Ingrese intervalo [a, b] a analizar")
-    a0 = float(input("Ingrese a: "))
+    a0 = float(input("Ingrese a(> 0): "))
     b0 = float(input("Ingrese b: "))
+    x0 = float(input("Punto de inicio(metodo de newton, SUG: valor ente {} y {}): ".format(a0, b0)))
+    ERROR = float(input("Maxima cota de error: "))
     
     R1 = 1e-2
     R2 = 1e-2
@@ -80,41 +97,21 @@ def inicializacion():
 
 
     m  = (-1)*(C2+C3)**2/(C1*C2**4*C3**4)
-    n = -(C2+C3)/(C1**2*C2**2*C3**2) + (6*C2*C3+4*C2**2+2*C3**2)*L3/(C1*C2**4*C3**2) - 2*(C2+C3)*R3**2 - R3**2/(C1*C2**4)
-    l = lambda w: a(w)*(2*(C2+C3)*L2/(C1*C2**2*C3**2) + (2*C2+C3)*L3/C1**2*C2**2*C3 - R3**2/(C1**2*C2) - 2*R2*R3/(C1*C2**2)) +\
-            -(6*C2*C3+6*C2**2+C3**2)*L3**2/(C1*C2**4*C3**2) - R3**4/(C1*C2**2) + 2*(C2+C3)*L3*R3**2/(C1*C2**3*C3**2)
+    n = -(C2+C3)/(C1**2*C2**2*C3**2) + (6*C2*C3+4*C2**2+2*C3**2)*L3/(C1*C2**4*C3**2) - 2*(C2+C3)*R3**2/(C1*C2**3*C3**2) - R3**2/(C1*C2**4)
+    l = lambda w: a(w)*(2*(C2+C3)*L2/(C1*C2**2*C3**2) + (2*C2+C3)*L3/C1**2*C2**2*C3 - R3**2/(C1**2*C2) - 2*R2*R3/(C1*C2**2)) \
+                -(6*C2*C3+6*C2**2+C3**2)*L3**2/(C1*C2**4*C3**2) - R3**4/(C1*C2**2) + 2*(C2+C3)*L3*R3**2/(C1*C2**3*C3**2)
     p = lambda w: a(w)**2*(L2/C1**2 - R2**2/C1) + \
             ((2*L2*R3**2)/(C1*C2) -L3**2/(C1**2*C2) - 2*(2*C2+C3)*L2*L3/(C1*C2**2*C3))*a(w) +\
-            2*(2*C2+C3)*L3**3/(C1*C2**2*C3) - 2*L3**2*R3**2/(C1*C2**2)
+            2*(2*C2+C3)*L3**3/(C1*C2**3*C3) - 2*L3**2*R3**2/(C1*C2**2)
 
-    r = lambda w: L1*a(w)**2*b(w) - L2**2/C1*a(w)**2 + 2*L2*L3**2/(C1*C2)*a(w) - L3**4/(C1*C2**2)
+    r = lambda w: L1*a(w)**2*b(w) - L2**2*a(w)**2/C1 + 2*L2*L3**2*a(w)/(C1*C2) - L3**4/(C1*C2**2)
 
-    f = lambda w: m + w**2*n + l(w)*w**4 + p(w)*w**6 + r(w)*w**8
+    f = lambda w: m + n*w**2 + l(w)*w**4 + p(w)*w**6 + r(w)*w**8
 
-    return a0, b0,  np.vectorize(f)
+    return a0, b0, f, x0, ERROR
 
-    
-##################################################
+def frec_resonancias():
+    a0, b0 , f , x0, ERROR = inicializacion()
+    resonancias(a0, b0, f, x0, ERROR)
 
-
-
- 
-"""
- 
-w = np.linspace(1, 50, 100)
-fvec = np.vectorize(f)
- 
-plt.plot(w, fvec(w))
-plt.grid()
-plt.show()
-
-
-#fvec = np.vectorize(f)
-a0, b0, f = inicializacion()
-resonancias(a0, b0, f)
-"""
-
-a0, b0 , f = inicializacion()
-x = np.linspace(a0, b0, 100)
-plt.plot(x, f(x))
-plt.show()
+frec_resonancias()
