@@ -70,35 +70,6 @@ def runge_kutta_sist(x0, f, h, a, b):
         return t, x
 
 
-""" Antigua implementacion(ERROR: indexacion en el tiempo(t))
-def runge_kutta_sist(x0, f, h, a, b):
-    
-    #Resuelve el sistema de ecuaciones diferenciales
-    #x' = f(t, x), x(t) = [x1(t), x2(t), ..., xm(t)], donde xr(t): R-> R^{p}, p natural
-    #input:
-    #    x0: valor de inicio (manteniendo la estructura de x(t))
-    #    f: funcion vectorial (camino)
-    #    a, b: cota inferior y superior (resp) del intervalo [a, b]
-    #    h: tamaño de paso
-    #output:
-    #    x = [x0, ..., xk, ... xn]: xk= aproximacion de la solucion del sistema de odes tk = a + k*h.  
-    
-    t = np.arange(a, b, h)
-    #x = np.array([x0])  # Solucion del sistema de odes
-    x = np.ndarray((len(t), 2, 3), dtype=np.longdouble)
-    x[0] = x0
-    for k, tk in enumerate(t[:len(t)-1]):
-        k1 = f(tk , x[k])
-        #aux2 = x[k]+h*k1/2
-        k2 = f(tk + h/2, x[k]+h*k1/2)
-        #aux3 = x[k]+h*k2/2
-        k3 = f(tk + h/2, x[k]+h*k2/2)
-        #aux4 = x[k]+h*k3
-        k4 = f(tk + h, x[k]+h*k3)
-        xx = x[k] + h*(k1+2*k2+2*k3+k4)/6 # xx = x_{k+1}
-        x[k+1] = xx
-    return t, x
-"""
 def genera_funcion_sist(pulso, amp, frec, induc, resist, capacit):
     if pulso == "sine":
         pulso_volt = lambda t: amp*np.sin(2*pi*frec*t)
@@ -396,46 +367,45 @@ def menu_operation(t, i, h, q, L, R, C):
         if current == lether_option_current[0]: 
             plot_current_inductor(t, i)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
- #           menu_operation(t, i, q, L , R, C)
+
 
         elif current == lether_option_current[1]:
             plot_current_condesador(t, i)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
         elif current == lether_option_current[2]:
             plot_current_resist(t, i)
             menu_operation(t, i, h, q, L, R, C)
-            #            menu_operation(t, i, q, L , R, C)
+
 
         elif current == lether_option_current[-1]:
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
     elif graph == lether_option_graph[1]: # Graficas de voltaje
-        options_volt = ["Voltage on inductors(FALTA IMPLEMENTAR)", "Voltage on capacitors" , \
+        options_volt = ["Voltage on inductors", "Voltage on capacitors" , \
                         "Voltage on resistors", "Go Back to Graph Menu"] 
         volt, lether_option_volt = options_menu(options_volt)
         
         if volt == lether_option_volt[0]:
             plot_volt_inductor(L, t, h, i)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
         elif volt == lether_option_volt[1]:
             plot_volt_condesador(t, q, C)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
             
         elif volt == lether_option_volt[2]:
             plot_volt_resist(t, i, R)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
         elif volt == lether_option_volt[-1]:
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
 
 
@@ -447,11 +417,11 @@ def menu_operation(t, i, h, q, L, R, C):
         if charge == lether_option_charge[0]:
             plot_charge_condensador(t, q)
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
         elif charge == lether_option_charge[-1]:
             menu_operation(t, i, h, q, L, R, C)
-#            menu_operation(t, i, q, L , R, C)
+
 
     elif graph == lether_option_graph[3]:   # Volver a menu inicial
         simulacion_rlc()
@@ -470,17 +440,6 @@ def menu_operation(t, i, h, q, L, R, C):
 def inicializacion():
     #NOTA: x0 = [z0, q0] = [q'(0), q(0)] = [i(0), q(0)], donde i = (i1, i2, i3) y q = (q1, q2, q3)
     x0 = np.array([[0, 0, 0], [0, 0, 0]], dtype=np.longdouble)
-    """
-    L0 = 18.31e-3    # Asignar valor real del inductancia
-    L1 = 11.27e-3    # Asignar valor real del inductancia
-    L2 = 17.51e-3    # Asignar valor real del inductancia
-    C0 = 218e-6    # Asignar valor real de la capacitancia
-    C1 = 481e-6    # Asignar valor real de la capacitancia
-    C2 = 997e-6    # Asignar valor real de la capacitancia
-    R0 = 4.355e3    # Asignar valor real de la resistencia
-    R1 = 3.334e3    # Asignar valor real de la resistencia
-    R2 = 5.269e3    # Asignar valor real de la resistencia
-    """
 
     L0 = 18.31e-3    # Asignar valor real del inductancia
     L1 = 11.27e-3    # Asignar valor real del inductancia
