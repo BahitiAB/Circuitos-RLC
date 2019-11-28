@@ -31,7 +31,7 @@ def newton_raphson(f, x0, ERROR, MAX_ITER):
         #xk = np.append(xk, x)
         e = abs(f(x))
         #step = abs(x-x0)
-        print("Iter{}: x = {}\tERROR = {}".format(i, x, e))
+#        print("Iter{}: x = {}\tERROR = {}".format(i, x, e))
         #if step < DELTA or e < ERROR:
         if e <ERROR:
             return x
@@ -41,20 +41,58 @@ def newton_raphson(f, x0, ERROR, MAX_ITER):
 
 
 
+def biseccion(f, a, b, ERROR, NUM_ITERATIONS):
+    """
+        Calcula algún cero de la función f en el intervalo [a, b].
+    """
+#    DELTA = 1e-8
+    if f(a)*f(b) < 0:
+        x = (a+b)/2
+        k = 0
+        while  abs(f(x)) > ERROR and k < NUM_ITERATIONS:
+            if f(x)*f(a) < 0:
+                b = x
+            else:
+                a = x
+
+            x = (a+b)/2
+            k +=1
+
+            print("Iter {}: a={}\tb={}\tx= {}\tf(x) = {}".format(k, a, b, x, f(x)))
+            
+        if k == NUM_ITERATIONS:
+            print("Maximo numero de iteraciones alcanzadas(biseccion)")
+            return x
+        else:
+            print("Maxima cota error superada(biseccion)")
+            return x
+
+    else:
+        print("Aplique otro método más adecuado.")
+
+
+
+
 ## resonancias
 
 def resonancias(a, b, f, x0, ERROR):
-    MAX_ITER = 1000
-    sol = newton_raphson(f, x0, ERROR, MAX_ITER)
-    print("Solucion de la ecuacion f(x)=0\nx = {}\tf({}) = {}".format(sol, sol, f(sol)))
+    MAX_ITER = 10000
+#    sol_newton = newton_raphson(f, x0, ERROR, MAX_ITER)
+    sol_bisec = biseccion(f, a, b, ERROR, MAX_ITER)
+    print("Solucion de la ecuacion no lineal:")
+#    print("(newton)x = {}\tf({}) = {}".format(sol_newton, sol_newton, f(sol_newton)))
+    print("(bisec)x = {}\tf({}) = {}".format(sol_bisec, sol_bisec, f(sol_bisec)))
+    
     # Grafica de la funcion x0
     DISC = 1000
     x = np.linspace(a, b, DISC)
     plt.plot(x, f(x), label="f(x)")
-    plt.plot(sol, f(sol), "o", label="solucion")
+#    plt.plot(sol_newton, f(sol_newton), "o", label="sol newton")
+    plt.plot(sol_bisec, f(sol_bisec), "o", label="sol biseccion")
     plt.grid()
     plt.legend()
     plt.show()
+
 
     opt = input("Hallar otra raiz(yes/no): ")
     options = ["yes", "no"]
@@ -73,10 +111,8 @@ def resonancias(a, b, f, x0, ERROR):
 def inicializacion():
 
     print("Ingrese intervalo [a, b] a analizar")
-    a0 = float(input("Ingrese a(> 0): "))
-    b0 = float(input("Ingrese b: "))
-    x0 = float(input("Punto de inicio(metodo de newton, SUG: valor ente {} y {}): ".format(a0, b0)))
-    ERROR = float(input("Maxima cota de error: "))
+    a0 = np.longdouble(input("Ingrese a(> 0): "))
+    b0 = np.longdouble(input("Ingrese b: "))
     
     R1 = 1e-2
     R2 = 1e-2
@@ -108,8 +144,21 @@ def inicializacion():
 
     f = lambda w: m + n*w**2 + l(w)*w**4 + p(w)*w**6 + r(w)*w**8
 
-    return a0, b0, f, x0, ERROR
+    """ Grafico para eleccion del punto de inicio del metodo de newton
+    x = np.linspace(a0, b0, 1000)
+    plt.plot(x, f(x), label="f(x)")
+    plt.title("Identique la lozalización de la raices")
+    plt.grid()
+    plt.legend()
+    plt.show()
+"""
+    
+#    x0 = float(input("Punto de inicio(metodo de newton, SUG: valor ente {} y {}): ".format(a0, b0)))
+    ERROR = float(input("Maxima cota de error: "))
 
+    x0 = 0 # provisional (punto de inicio del metodo de newton
+    return a0, b0, f, x0, ERROR
+   
 def frec_resonancias():
     a0, b0 , f , x0, ERROR = inicializacion()
     resonancias(a0, b0, f, x0, ERROR)
