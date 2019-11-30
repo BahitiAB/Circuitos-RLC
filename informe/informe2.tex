@@ -1,0 +1,360 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[english,spanish]{babel}
+\usepackage{indentfirst}
+\usepackage{anysize}
+\marginsize{2,54cm}{2,54cm}{2,54cm}{2,54cm}
+\usepackage[psamsfonts]{amssymb}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usepackage{float}
+\usepackage{subfigure}
+\renewcommand{\thepage}{}
+\columnsep=7mm
+
+\linespread{1.4} \sloppy
+
+\newcommand{\fc}{\displaystyle\frac}
+\newcommand{\ds}{\displaystyle}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\begin{document}
+\begin{center}
+	\hfill 
+	\parbox{0.5\linewidth}{%
+		\centering
+		UNIVERSIDAD NACIONAL DE INGENIERÍA\\
+		COLLEGE OF SCIENCES\\
+        PHYSICS PROGRAM\par
+		\vspace{.05\textheight}
+	}
+	\hfill
+	\includegraphics[width=2cm]{logouni}\\
+	\vspace{.005\textheight}
+	{\Large \textbf{RLC Circuit: Experiment and Simulation}}
+\end{center}
+ 
+\begin{center}
+Gustavo Lozano Acuña $1$, Luis Robles Gamarra $2$ Alejandra Hinostroza Caldas $3$ \vskip12pt
+{\it College of Sciences $1$, Universidad Nacional de Ingenier\'{\i}a $1$, e-mail: glozanoa@uni.pe\\
+College of Sciences $2$, Universidad Nacional de Ingenier\'{\i}a $2$, e-mail: luis.robles.g@uni.pe\\
+College of Sciences $3$, Universidad Nacional de Ingenier\'{\i}a $3$, e-mail: ahinostrozac@uni.pe }
+\end{center}
+
+\begin{quotation}
+{\small
+\begin{center}
+Abstract\\
+The behaviour of an RLC circuit is described generally by a system of nonlinear differential equations, with which it can determinate the characteristic functions or curves of voltage and amperage in each element of the circuit, in this case, of the three coils, resistances and capacitors that integer it. For it, we used the fourth-order Runge-Kutta method and an encoded simulator in Python to get the numerical solutions of those differential equations and then, we contrasted them with the measures taken in the oscilloscope with the real circuit.
+\end{center}
+
+Keywords: RLC circuit. Runge-Kutta method. Voltage. Amperage.\\ 
+}
+\end{quotation}
+
+\begin{multicols}{2}
+\begin{center}
+{\large \bf 1. INTRODUCCI\'ON}
+\end{center}
+Los circuitos RLC son aquellos circuitos que contienen inductores, condensadores y resistencias. Aplicando leyes de Kirchhoff sobre el circuito se obtiene un sistema de ecuaciones diferenciales cuya solución define el conjunto de curvas características de voltaje e intensidad de corriente. El circuito empleado consiste en tres resistencias, bobinas y condensadores conectados en paralelo, la solución al sistema de ecuaciones obtenido es complicada de obtener analíticamente por lo que recurrimos a un método numérico (método de Runge-Kutta de cuarto orden) y a un simulador programado en Python para determinar dicha solución.
+
+\begin{center}
+{\large \bf 2. OBJETIVOS}
+\end{center}
+\begin{itemize}
+\item Obtener las corrientes y voltajes de un sistema de tres ecuaciones diferenciales no lineales para un circuito RLC empleando el método de Runge-Kutta de cuarto orden.
+\item Contrastar las curvas obtenidas en el simulador con las mostradas en el osciloscopio.
+\end{itemize}
+
+\begin{center}
+{\large \bf 3. CONCEPTOS PREVIOS}
+\end{center}
+\begin{enumerate}
+\item \textbf{Leyes de Kirchhoff}\\
+Kirchhoff’s laws govern the conservation of charge and energy in electrical circuits.
+\begin{enumerate}
+\item Junction rule
+At any node (junction) in an electrical circuit, the sum of currents flowing into that node is equal to the sum of currents flowing out of that node, or the sum of currents entering the junction are thus equal to the sum of currents leaving. This implies that the current is conserved (no loss of current). 
+\item Close loop rule
+The principles of conservation of energy imply that the directed sum of the electrical potential differences (voltage) around any closed circuit is zero.
+\end{enumerate} 
+
+\item \textbf{Resonance}\\
+Resonance describes the phenomena of amplification that occurs when the frequency of a periodically aplied force is in harmonic proportion to a natural frequency of the system on which it acts.\\
+Resonance occurs when a system is able to store and easily transfer energy between two or more different storages modes.\\
+Electrical resonances occurs in an electric circuit at a particular resonant frequency when the impedances of circuits elements cancel each other.
+
+\item \textbf{Runge-Kutta Method}
+The formula for the Euler method is $$y_{n+1} = y_n + hf(x_n, y_n)$$ But this is not recomended for practical use. Consider the use of a step like this to take a "trial" step to the midpoint of an interval $h$. Then use the value of both $x$ and $y$ at the midpoint to compute the "real" step acorss the whole interval. In equations
+
+\begin{align}
+\nonumber k_1 &= hf(x_n, y_n) \\
+\nonumber k_2 &= hf(x_n + \frac{1}{2}h,y_n + \frac{1}{2}k_1) \\
+\nonumber y_{n+1} &= y_n + k_2 + O(h^3)\\
+\label{rk}
+\end{align}
+
+As indicated in the error term, this symmetrization cancels out the first-order error term, making the method second order. [A method is conventionally called nth order if its error term is $O(hn+1)$] . In fact, \eqref{rk} is called the second-order Runge-Kutta or midpoint method.\\ 
+There are many ways to evaluate the right-hand side $f(x,y)$ that all agree to first order, but that have different coefficients of higher-order error terms. Adding up the right combination of these, we can eliminate the error terms order by order. That is the basic idea of the Runge-Kutta method.\\
+By far the most often used is the classical fourth-order Runge-Kutta formula, which has a certain sleekness of organization about it:
+
+\begin{align}
+\nonumber k_1 &= hf(x_n, y_n) \\
+\nonumber k_2 &= hf(x_n + \frac{1}{2}h, y_n + \frac{1}{2}k_1) \\
+\nonumber k_3 &= hf(x_n + \frac{1}{2}h, y_n + \frac{1}{2}k_2) \\
+\nonumber k_4 &= hf(x_n + \frac{1}{2}h, y_n + \frac{1}{2}k_3) \\
+\nonumber y_{n+1} &= y_n + \frac{1}{6}k_1 + \frac{1}{3}k_2 +\frac{1}{3}k_3 +\frac{1}{6}k_4 + O(h^6)\\
+\label{rkf}
+\end{align}
+The fourth-order Runge-Kutta method requires four evaluations of the righthand side per step h. This will be superior to the midpoint method \eqref{rk} if at least twice as large a step is possible with \eqref{rkf} for the same accuracy.
+\end{enumerate}
+
+\begin{center}
+{\large \bf 4. AN\'ALISIS}
+\end{center}
+\begin{itemize}
+\item \textbf{Sistema de Ecuaciones Diferenciales de Segundo Orden del circuito}
+Empleando el análisis de mallas y las leyes de Kirchhoff en el circuito RLC, determinaremos el sistema de ecuaciones diferenciales al que daremos solución
+\end{itemize}
+\end{multicols}
+
+\begin{figure}[h!]
+  \begin{center}
+    \begin{circuitikz}
+     %Loop 1
+      \draw (0,0)
+      to[V,v=$V(t)$] (0,4) % The voltage source
+      to[L=$L_1$] (4,4) % L1
+      to[C=$C_1$] (4,0) % C1
+      to[R=$R_1$] (0,0); % R1
+     %Loop 2 
+      \draw (4,4)
+      to[L=$L_2$] (8,4) % L2
+      to[C=$C_2$] (8,0) % C2
+      to[R=$R_2$] (4,0); % R2
+     %Loop 3 
+      \draw (8,4)
+      to[L=$L_3$] (12,4) % L3
+      to[C=$C_3$] (12,0) % C3
+      to[R=$R_3$] (8,0); % R3
+    \end{circuitikz}
+    \caption{RLC Circuit diagram}
+  \end{center}
+\end{figure}
+
+Loop ABGH
+	\begin{equation*}	
+	V(t)-L_1 \frac{d}{dt}(i_1 + i_2 + i_3)-\frac{q_1}{C_1}-(i_1 + i_2 + i_3)R_1=0
+	\end{equation*}
+
+Loop BCFG
+	\begin{equation*}
+	\frac{q_1}{C_1}-L_2 \frac{d}{dt}(i_2+i_3)-\frac{q_2}{C_2}-(i_2+i_3)R_2=0
+	\end{equation*}
+
+Loop CDEF
+	\begin{equation*}
+	\frac{q_2}{C_2}-L_3 \frac{d}{dt}i_3 -\frac{q_3}{C_3}-i_3 R_3=0
+	\end{equation*}
+
+However: $i_k = \frac{dq_k}{dt} ; k=1,2,3$
+\begin{align}
+	V(t)-&L_1 \frac{d^2}{dt^2}(q_1 + q_2 + q_3)-\frac{q_1}{C_1} -\frac{d}{dt}(q_1 + q_2 + q_3)R_1=0 \label{1}\\ 
+	\frac{q_1}{C_1}-&L_2 \frac{d^2}{dt^2}(q_2+q_3)-\frac{q_2}{C_2} -\frac{d}{dt}(q_2+q_3)R_2=0 \label{2} \\ 
+	\frac{q_2}{C_2}-&L_3 \frac{d^2}{dt^2}(q_3)-\frac{q_3}{C_3} -\frac{d}{dt}(q_3)R_3=0 \label{3}	
+\end{align}
+
+Initial conditions:
+\begin{center}
+	\begin{align*}
+	q_k(0)&=0, k=1,2,3\\
+	i_k(0)=q'_k(0)&=0, k=1,2,3
+	\end{align*}
+\end{center}
+
+\begin{align*}
+	y:\left[0;\tau \right]&\rightarrow \mathbb{R}^n\\
+	y'(t)&=f\left(t;y(t)\right) ; t\in \left[0;\tau \right]\\
+	y(0)&=y_0\\
+	q(t)&=(q_1(t);q_2(t);q_3(t)) ; t\in \left[0;\tau \right];
+\end{align*}
+
+Let us compute: $L_2*\eqref{1} - L_1*\eqref{2}$
+
+\begin{align*}
+	&\left( L_2 V-L_2 L_1 \frac{d^2}{dt^2}(q_1+q_2+q_3)-\frac{L_2 q_1}{C_1}-L_2 R_1\frac{d}{dt}(q_1+q_2+q_3)\right)\\ 
+	&-\left( \frac{L_1 q_1}{C_1} -L_2 L_1 \frac{d^2}{dt^2}(q_2+q_3)-\frac{L_1 q_2}{C_2} -L_1 R_2 \frac{d}{dt}(q_2+q_3)\right)=0
+\end{align*}
+
+\begin{align*}
+	L_1 L_2 \frac{d^2 q_1}{dt^2}&=\left[ L_2 V -\frac{L_2 q_1}{C_1}-L_2 R_1 \frac{d}{dt}(q_1+q_2+q_3)\right]\\
+	&-\left[\frac{L_1 q_1}{C_1}-\frac{L_1 q_2}{C_2}-L_1 R_2 \frac{d}{dt}(q_2+q_3)\right]\\
+	\\    
+	L_1 L_2 \frac{d^2 q_1}{dt^2}&=L_2 V -\left(\frac{L_2+L_1}{C_1}\right)q_1+\frac{L_1}{C_2}q_2\\
+	&-L_2 R_1\frac{dq_1}{dt}+(L_1 R_2-L_2 R_1)\left(\frac{dq_2}{dt}+\frac{dq_3}{dt}\right)
+\end{align*}
+
+\begin{itemize}
+	\item $\dfrac{d^2}{dt^2} q_1 = \dfrac{V}{L_1} \ - \ \left( \dfrac{L_2 + L_1}{C_1 L_1 L_2} \right) q_1 \ + \ \dfrac{1}{L_2 C_2} q_2 \ - \ \dfrac{R_1}{L_1} \dfrac{dq_1}{dt} \ - \ \left( \dfrac{L_2}{R_2} - \dfrac{L_1}{R_1} \right) \left( \dfrac{dq_2}{dt} + \dfrac{dq_3}{dt} \right)$\\
+
+	$L_3*\eqref{2} - L_2*\eqref{3} =$ \\\\ $\left( L_3 \dfrac{q_1}{C_1} \ - \ L_2 L_3 \dfrac{d^2}{dt^2} (q_2 + q_3) \ - \ \dfrac{L_3 \ q_2}{C_2} \ - \ L_3 R_2 \dfrac{d}{dt} (q_2 + q_3) \right)$ \begin{flushright}
+	$- \ \left( \dfrac{L_2\  q_2}{C_2} \ - \ L_2 L_3 \dfrac{d^2}{dt^2} q_3 \ - \ \dfrac{L_2 \ q_3}{C_3} \ - \ R_3 L_2 \dfrac{d}{dt} q_3 \right) = 0$
+\end{flushright} 
+	$L_2 L_3 \dfrac{d^2}{dt^2} q_2 \ = \ \dfrac{L_3}{C_1} q_1 \ - \ \dfrac{L_3 \ q_2}{C_2} \ - \ L_3 R_2 \left( \dfrac{dq_2}{dt} +  \dfrac{dq_3}{dt} \right) - \dfrac{L_2 \ q_2}{C_2} + \dfrac{L_2 \ q_3}{C_3} $ 
+\begin{flushright}
+	$= \ \dfrac{L_3}{C_1} q_1 \ - \ \left( \dfrac{L_2 + L_3}{C_2} \right) q_2 \ + \ \dfrac{L_2}{C_3} q_3 \ - \ L_3 R_2 \left( \dfrac{dq_2}{dt} + \dfrac{dq_3}{dt} \right)$
+\end{flushright}
+
+	\item $\dfrac{d^2}{dt^2} q_2 \ = \ \dfrac{q_1}{L_2 C_1} \ - \ \left( \dfrac{L_2 + L_3}{C_2 L_2 L_3} \right) q_2 \ + \ \dfrac{q_3}{C_3 L_3} \ - \ \dfrac{R_2}{L_2} \left( \dfrac{dq_2}{dt} + \dfrac{dq_3}{dt} \right)$\\
+	
+From \eqref{3}:
+
+	$\dfrac{q_2}{C_2} \ - \ \dfrac{q_3}{C_3} \ - \ R_3 \dfrac{dq_3}{dt} \ = \ L_3 \dfrac{d^2}{dt^2} q_3$\\
+
+	\item $\dfrac{d^2}{dt^2} q_3 \ = \ \dfrac{q_2}{L_3 C_2} \ - \ \dfrac{q_3}{L_3 C_3} - \dfrac{R_3}{L_3} \dfrac{dq_3}{dt}$\\
+\end{itemize}
+
+Thus:
+
+\begin{align*}
+	\dfrac{d^2}{dt^2} q_1 &= \dfrac{V}{L_1} - \left( \dfrac{L_2 + L_1}{C_1 L_1 L_2} \right) q_1 + \dfrac{1}{L_2 C_2} q_2 - \dfrac{R_1}{L_1} \dfrac{dq_1}{dt} - \left( \dfrac{L_2}{R_2} - \dfrac{L_1}{R_1} \right) \left( \dfrac{dq_2}{dt} + \dfrac{dq_3}{dt} \right) \\
+	\dfrac{d^2}{dt^2} q_2 &= \ \dfrac{q_1}{L_2 C_1} \ - \ \left( \dfrac{L_2 + L_3}{C_2 L_2 L_3} \right) q_2 \ + \ \dfrac{q_3}{C_3 L_3} \ - \ \dfrac{R_2}{L_2} \left( \dfrac{dq_2}{dt} + \dfrac{dq_3}{dt} \right) \\
+	\dfrac{d^2}{dt^2} q_3 &= \ \dfrac{q_2}{L_3 C_2} \ - \ \dfrac{q_3}{L_3 C_3} - \dfrac{R_3}{L_3} \dfrac{dq_3}{dt}
+\end{align*}
+
+	$$q''(t) = \left[ \begin{array}{l} 
+		\dfrac{d^2}{dt^2} q_1 \\\\ 
+		\dfrac{d^2}{dt^2} q_2 \\\\ 
+		\dfrac{d^2}{dt^2} q_3
+	\end{array}
+	\right] = g(t, q'(t), q(t)), \ t \in [0, T]$$
+	$$q(t) = 0 \qquad q'(t) = 0$$
+\begin{multicols}{2}
+\begin{itemize}
+\item \textbf{Resonant Frequencies}\\
+La ecuación cuya solución nos da las frecuencias de resonancia fue obtenida mediante el análisis de las impedancias del circuito. Con el método de la bisección codificado en \textit{Python} se dio solución a la ecuación.
+\end{itemize}
+\end{multicols}
+\[
+-\dfrac{(C_2+C_3)^2}{C_1C_2^4C_3^4} + w^2 \left[ - \dfrac{(C_2+C_3)}{C_1^2C_2^2C_3^2} + \dfrac{(6C_2C_3+4C_2^2+2C_3^2)L_3}{C_1C_2^4C_3^2} - \dfrac{2(C_2+C_3)R_3^2}{C_1C_2^3C_3^2} - \dfrac{R_3^2}{C_1C_2^4} \right]
+\]
+\[
++ w^4 \left[ \dfrac{2(C_2+C_3)L_2}{C_1C_2^2C_3^2} + \dfrac{(2C_2+C_3)L_3}{C_1^2C_2^2C_3^2} - \dfrac{R_3^2}{C_1^2C_2} - \dfrac{2R_2R_3}{C_1C_2^2} \right] a
+\]
+\[
++ w^4 \left[ - \dfrac{(6C_2C_3+6C_2^2+C_3^2)L_3^2}{C_1C_2^4C_3^2} - \dfrac{R_3^4}{C_1C_2^2} + \dfrac{2(C_2+C_3)L_3R_3^2}{C_1C_2^3C_3^2} \right] + w^6 \left[ \dfrac{L_2}{C_1^2} - \dfrac{R_2^2}{C_1} \right] a^2 
+\]
+\[
++ w^6 \left[ \left( - \dfrac{L_3^2}{C_1^2C_2} - \dfrac{2(2C_2+C_3)L_2L_3}{C_1C_2^2C_3} + \dfrac{2L_2R_3^2}{C_1C_2} \right) a + \dfrac{2(2C_2+C_3)L_3^3}{C_1C_2^3C_3} - \dfrac{2L_3^2R_3^2}{C_1C_2^2} \right]
+\]
+\[
++ w^8 \left[ L_1a^2b - \dfrac{L_2^2}{C_1} a^2 + \dfrac{2L_2L_3^2}{C_1C_2} a - \dfrac{L_3^4}{C_1C_2^2} \right] = 0
+\]
+Where:\\
+
+$
+a = R_3^2 + \left( - \dfrac{1}{wC_2} - \dfrac{1}{wC_3} + wL_3 \right)^2
+$\\
+
+$
+b = \left( R_2 + \dfrac{R_3}{aw^2C_2^2} \right)^2 +
+$\\
+$
+\left( - \dfrac{1}{wC_2} - \dfrac{1}{aw^3C_2^2C_3} - \dfrac{1}{aw^3C_2C_3^2} + wL_2^2 + \dfrac{L_3}{awC_2^2} + \dfrac{2L_3}{awC_2C_3} - \dfrac{wL_3^2}{aC_2} - \dfrac{R_3^2}{awC_2} \right)^2
+$
+
+\begin{multicols}{2}
+\begin{center}
+{\large \bf 5. OBSERVACIONES Y RESULTADOS}
+\end{center}
+\begin{itemize}
+\item \textbf{Resonant Frequencies}
+Las frecuencias de resonancia obtenidas fueron:\\
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{a} & \textbf{b} & \textbf{$\omega$} & \textbf{f (Hz)} \\ \hline
+22.5 & 25 & 23.7851 & 3.7855 \\ \hline
+45.7 & 45.8 & 45.7792 & 7.2860 \\ \hline
+\end{tabular}
+\caption{Resonant Frequencies}
+\end{table}
+\item \textbf{Simulación del circuito RLC}\\
+Se obtuvieron las siguientes gráficas en el simulador.
+\begin{enumerate}
+\item Amplitud: Vpp = $320.10^{-3} V$
+\item Frecuencias: 
+\begin{enumerate}
+\item $w_1 = 3.8Hz$
+\item $w_2 = 7.3Hz$
+\end{enumerate}
+\item Paso de Runge-Kutta: 0.001
+\end{enumerate}
+\end{itemize}
+\end{multicols}
+\begin{figure}[H]
+\centering
+\subfigure[Voltaje a través de los inductores]
+{\includegraphics[scale=0.75]{VI_38.png}}
+\quad
+\subfigure[Voltaje a través de los condensadores]
+{\includegraphics[scale=0.75]{VC_38.png}}
+\quad
+\subfigure[Voltaje a través de las resistencias]
+{\includegraphics[scale=0.75]{VR_38.png}}
+\caption{Gráficas obtenidas con $f = 3.8Hz$}
+\label{Figura 2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\subfigure[Voltaje a través de los inductores]
+{\includegraphics[scale=0.75]{VI_73.png}}
+\quad
+\subfigure[Voltaje a través de los condensadores]
+{\includegraphics[scale=0.75]{VC_73.png}}
+\quad
+\subfigure[Voltaje a través de las resistencias]
+{\includegraphics[scale=0.75]{VR_73.png}}
+\caption{Gráficas obtenidas con $f = 7.3Hz$}
+\label{Figura 3}
+\end{figure}
+
+\begin{multicols}{2}
+\begin{center}
+{\large \bf 6. CONCLUSIONES}
+\end{center}
+\begin{itemize}
+\item We were able to obtain electric currents and voltages, in term of time for an RLC circuit. 
+\item We found severeal resonant frequencies, two of which were 3.8 Hz and 7.3 Hz, working with which, we got higher voltage and amperage amplitudes than when we used non-resonant frequencies.
+\item We witnessed how we were able to succesfully make a simulation for a physical phenomenom, just by understanding its basic principles and taking programming as a tool.
+\end{itemize}
+
+
+\begin{center}
+{\large \bf Agradecimientos}
+\end{center}
+Los autores agradecen a las autoridades de la Facultad de Ciencias de la Universidad Nacional de Ingenier\'{\i}a, a la Escuela Profesional de Física y a la profesora Alejandra Altamirano por su apoyo.
+
+\end{multicols}
+
+\begin{center}
+ -----------------------------------------------------------------------------
+\end{center}
+\begin{multicols}{2}
+\begin{list}{}{\setlength{\topsep}{0mm}\setlength{\itemsep}{0mm}%
+\setlength{\parsep}{0mm}\setlength{\leftmargin}{4mm}}
+%
+%------------------------------------- References --------------------
+\small
+\item[1.] Tipler P., Mosca G., (2008) \textit{Physics for Scientists and Engineers}, New York, USA, WH Freeman and Company
+%---------------------------------------------------------------------
+%
+\end{list}
+\end{multicols}
+\end{document}\grid
